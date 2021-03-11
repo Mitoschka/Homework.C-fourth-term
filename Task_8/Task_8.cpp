@@ -3,45 +3,56 @@ using namespace std;
 
 int robberyTheory(int valueOfHouse, int* arrayOfValuesOfHouses)
 {
-    // Maximum value of value
-    int maxCostOfStolen = arrayOfValuesOfHouses[0];
-    for (int i = 1; i < valueOfHouse; i++)
+    // Allocating memory for an array + 1
+    int* arrayOfHousesToBeRobbed = new int[valueOfHouse + 1];
+    arrayOfHousesToBeRobbed[0] = 0;
+    // Rewriting an old array into a new one
+    for (int i = 0; i < valueOfHouse; i++)
     {
-        // Take every even house
-        if (i % 2 == 0)
+        arrayOfHousesToBeRobbed[i + 1] = arrayOfValuesOfHouses[i];
+    }
+    // Dynamic approach
+    for (int i = 3; i <= valueOfHouse; i++)
+    {
+        arrayOfHousesToBeRobbed[i] += max(arrayOfHousesToBeRobbed[i - 2], arrayOfHousesToBeRobbed[i - 3]);
+    }
+    // The resulting value
+    int maximumValue = 0;
+    // Search the maximum in the array
+    for (int i = 0; i <= valueOfHouse; i++)
+    {
+        if (arrayOfHousesToBeRobbed[i] > maximumValue)
         {
-            maxCostOfStolen += arrayOfValuesOfHouses[i];
+            maximumValue = arrayOfHousesToBeRobbed[i];
         }
     }
+    // Clearing memory
+    delete[] arrayOfHousesToBeRobbed;
     // Returning the resulting value
-    return maxCostOfStolen;
+    return maximumValue;
 }
 
 bool test()
 {
     // Boolean variable passing the test
     bool isPassed = true;
-    // Odd array check
     int firstTestArrayOfValuesOfHouses[7] = {6, 7, 1, 3, 8, 2, 4};
     if (robberyTheory(7, firstTestArrayOfValuesOfHouses) != 19)
     {
         isPassed = false;
     }
-    // Even array check
-    int secondTestArrayOfValuesOfHouses[6] = {6, 1, 3, 8, 2, 4};
-    if (robberyTheory(6, secondTestArrayOfValuesOfHouses) != 11)
+    int secondTestArrayOfValuesOfHouses[6] = {1, 100, 1, 100, 1, 100};
+    if (robberyTheory(6, secondTestArrayOfValuesOfHouses) != 300)
     {
         isPassed = false;
     }
-    // Checking from an array with zeros
-    int thirdTestArrayOfValuesOfHouses[4] = {0, 0, 0, 0};
-    if (robberyTheory(4, thirdTestArrayOfValuesOfHouses) != 0)
+    int thirdTestArrayOfValuesOfHouses[5] = {100, 1, 100, 1, 100};
+    if (robberyTheory(5, thirdTestArrayOfValuesOfHouses) != 300)
     {
         isPassed = false;
     }
-    // Checking with an array of ones
-    int fourthTestArrayOfValuesOfHouses[4] = { 1, 1, 1, 1 };
-    if (robberyTheory(4, fourthTestArrayOfValuesOfHouses) != 2)
+    int fourthTestArrayOfValuesOfHouses[5] = {1, 1, 1, 1, 1};
+    if (robberyTheory(5, fourthTestArrayOfValuesOfHouses) != 3)
     {
         isPassed = false;
     }
