@@ -4,28 +4,60 @@ using namespace std;
 int robberyTheory(int valueOfHouse, int* arrayOfValuesOfHouses)
 {
     // Allocating memory for an array + 1
-    int* arrayOfHousesToBeRobbed = new int[valueOfHouse + 1];
-    arrayOfHousesToBeRobbed[0] = 0;
+    int* arrayOfHousesToBeRobbed = new int[valueOfHouse + 1] {0};
     // Rewriting an old array into a new one
     for (int i = 0; i < valueOfHouse; i++)
     {
         arrayOfHousesToBeRobbed[i + 1] = arrayOfValuesOfHouses[i];
     }
+    int* arrayOfIndexsOfHousesToBeRobbed = new int[valueOfHouse] {0};
     // Dynamic approach
     for (int i = 3; i <= valueOfHouse; i++)
     {
-        arrayOfHousesToBeRobbed[i] += max(arrayOfHousesToBeRobbed[i - 2], arrayOfHousesToBeRobbed[i - 3]);
+        if (arrayOfHousesToBeRobbed[i - 2] >= arrayOfHousesToBeRobbed[i - 3])
+        {
+            arrayOfHousesToBeRobbed[i] += arrayOfHousesToBeRobbed[i - 2];
+            arrayOfIndexsOfHousesToBeRobbed[i] = i - 2;
+        }
+        else
+        {
+            arrayOfHousesToBeRobbed[i] += arrayOfHousesToBeRobbed[i - 3];
+            arrayOfIndexsOfHousesToBeRobbed[i] = i - 3;
+        } 
     }
     // The resulting value
     int maximumValue = 0;
     // Search the maximum in the array
-    for (int i = 0; i <= valueOfHouse; i++)
+    int index = 0;
+    if (arrayOfHousesToBeRobbed[valueOfHouse] >= arrayOfHousesToBeRobbed[valueOfHouse + 1])
     {
-        if (arrayOfHousesToBeRobbed[i] > maximumValue)
-        {
-            maximumValue = arrayOfHousesToBeRobbed[i];
-        }
+        maximumValue = arrayOfHousesToBeRobbed[valueOfHouse];
+        index = valueOfHouse;
     }
+    else
+    {
+        maximumValue = arrayOfHousesToBeRobbed[valueOfHouse + 1];
+        index = valueOfHouse + 1;
+    }
+
+    cout << endl << "Thief will steal from houses: ";
+
+    int* arrayOfHousesWhichThiefSteal = new int[valueOfHouse] {0};
+    int count = 0;
+
+    while (index != 0)
+    {
+        arrayOfHousesWhichThiefSteal[count] = arrayOfValuesOfHouses[index - 1];
+        index = arrayOfIndexsOfHousesToBeRobbed[index];
+        count++;
+    }
+
+    for (int i = count - 1; i >= 0; i--)
+    {
+        cout << arrayOfHousesWhichThiefSteal[i] << ' ';
+    }
+    delete[] arrayOfHousesWhichThiefSteal;
+    
     // Clearing memory
     delete[] arrayOfHousesToBeRobbed;
     // Returning the resulting value
